@@ -200,6 +200,73 @@
     margin:0 0 26px 0;
   }
 
+  .floating-notice{
+    display:none;
+    position:fixed;
+    z-index:50;
+    background:var(--green-dark);
+    color:#fdfbf5;
+    border-radius:10px;
+    box-shadow:0 8px 24px rgba(28,33,27,0.25);
+  }
+  .floating-notice.show{ display:flex; }
+  .floating-notice .fn-close{
+    background:none;
+    border:none;
+    color:#fdfbf5;
+    opacity:0.7;
+    line-height:1;
+    cursor:pointer;
+  }
+  .floating-notice .fn-close:hover{ opacity:1; }
+
+  /* Desktop / wide viewport: docked to the right of the form, bigger text */
+  @media (min-width:1400px){
+    .floating-notice{
+      top:120px;
+      left:calc(50% + 400px);
+      width:280px;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:10px;
+      padding:20px;
+      font-size:1.05rem;
+      line-height:1.5;
+    }
+    .floating-notice .fn-icon{ font-size:1.8rem; }
+    .floating-notice .fn-close{
+      align-self:flex-end;
+      font-size:1.1rem;
+      padding:2px;
+    }
+  }
+
+  /* Mobile / narrower viewport: compact bar pinned to the bottom */
+  @media (max-width:1399px){
+    .floating-notice{
+      left:50%;
+      bottom:16px;
+      transform:translateX(-50%);
+      max-width:min(520px, calc(100% - 24px));
+      align-items:center;
+      gap:10px;
+      padding:12px 36px 12px 14px;
+      font-size:0.85rem;
+      line-height:1.4;
+    }
+    .floating-notice .fn-icon{ flex:0 0 auto; font-size:1.1rem; }
+    .floating-notice .fn-close{
+      position:absolute;
+      top:6px;
+      right:8px;
+      font-size:1rem;
+      padding:6px;
+    }
+  }
+  @media (max-width:480px){
+    .floating-notice{ font-size:0.8rem; padding:10px 32px 10px 12px; }
+  }
+
   .qsection{
     background:var(--card);
     border:1px solid var(--border);
@@ -445,7 +512,7 @@
         <label class="qlabel">Qui fournira les textes, photos et documents du futur site ?</label>
         <div class="radio-row">
           <label><input type="radio" name="fourniture_contenu" value="L'entreprise"> L'entreprise</label>
-          <label><input type="radio" name="fourniture_contenu" value="Vous (l'agence)"> Vous (l'agence)</label>
+          <label><input type="radio" name="fourniture_contenu" value="Vous (youssef)"> Vous (youssef)</label>
           <label><input type="radio" name="fourniture_contenu" value="A definir"> À définir</label>
         </div>
       </div>
@@ -681,7 +748,7 @@
         <label class="qlabel">Qui sera responsable de l'hébergement, du nom de domaine et de leurs renouvellements ?</label>
         <div class="radio-row">
           <label><input type="radio" name="responsable_hebergement" value="L'entreprise"> L'entreprise</label>
-          <label><input type="radio" name="responsable_hebergement" value="Vous (l'agence)"> Vous (l'agence)</label>
+          <label><input type="radio" name="responsable_hebergement" value="Vous (youssef)"> Vous (youssef)</label>
           <label><input type="radio" name="responsable_hebergement" value="A definir"> À définir</label>
         </div>
       </div>
@@ -691,12 +758,12 @@
         <div class="radio-row">
           <label><input type="radio" name="administrateur_site" value="Le proprietaire de l'entreprise"> Le propriétaire de l'entreprise</label>
           <label><input type="radio" name="administrateur_site" value="Un employe"> Un employé</label>
-          <label><input type="radio" name="administrateur_site" value="Vous (l'agence)"> Vous (l'agence)</label>
+          <label><input type="radio" name="administrateur_site" value="Vous (youssef)"> Vous (youssef)</label>
         </div>
       </div>
 
       <div class="q">
-        <label class="qlabel">Souhaitez-vous que nous assurions la maintenance après la mise en ligne ? Si oui, laquelle ?</label>
+        <label class="qlabel">Souhaitez-vous que nous assurions Dla maintenance après la mise en ligne ? Si oui, laquelle ?</label>
         <div class="choices">
           <label><input type="checkbox" name="maintenance" value="Correctifs de securite"> Correctifs de sécurité</label>
           <label><input type="checkbox" name="maintenance" value="Sauvegardes"> Sauvegardes</label>
@@ -730,17 +797,32 @@
 
   </form>
 
-  <footer class="sig">Made by <a href="https://github.com/Dna9a" target="_blank" rel="noopener">Youssef Abied</a></footer>
+  <footer class="sig">Made by <a href="https://www.linkedin.com/in/youssef-abied/" target="_blank" rel="noopener">Youssef Abied</a></footer>
+</div>
+
+<div class="floating-notice" id="floatingNotice">
+  <span class="fn-icon">💡</span>
+  <span>En cas de question peu claire ou si vous ne savez pas quoi répondre, laissez-la simplement vide — nous en discuterons ensemble par la suite.</span>
+  <button type="button" class="fn-close" id="floatingNoticeClose" aria-label="Fermer">✕</button>
 </div>
 
 <script>
   const introScreen = document.getElementById('introScreen');
   const formScreen = document.getElementById('formScreen');
   const form = document.getElementById('quizForm');
+  const floatingNotice = document.getElementById('floatingNotice');
+  const floatingNoticeClose = document.getElementById('floatingNoticeClose');
+
+  if (floatingNoticeClose && floatingNotice) {
+    floatingNoticeClose.addEventListener('click', function(){
+      floatingNotice.classList.remove('show');
+    });
+  }
 
   document.getElementById('startBtn').addEventListener('click', function(){
     introScreen.style.display = 'none';
     formScreen.style.display = 'block';
+    if (floatingNotice) { floatingNotice.classList.add('show'); }
     window.scrollTo(0,0);
     updateProgress();
   });
